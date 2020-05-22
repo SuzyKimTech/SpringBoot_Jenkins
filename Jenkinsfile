@@ -72,5 +72,11 @@ pipeline {
       }
     }
 
+    stage('test') {
+      steps {
+        setGitHubPullRequestStatus(context: 'test', message: 'this is test! commit done.', state: 'SUCCESS')
+      }
+    }
+
   }
 }
