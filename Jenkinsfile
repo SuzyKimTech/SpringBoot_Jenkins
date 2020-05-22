@@ -1,51 +1,19 @@
-// Declarative, remote deploy
-pipeline {
-    agent any
-    stages {
-        stage('Git Process') {
-            steps {
-                git credentialsId: 'd1818738-f9c0-499c-9136-f96c0df70a25',
-                url: 'https://github.com/SuzyKimTech/SpringBoot_Jenkins.git'
-            }
-        }
-        stage('Build') {
-            steps {
-                echo '!! Build start !!'
-                sh './gradlew clean build'
-            }
-        }
-        stage('Send file to Remote server & Deploy') {
-            steps([$class: 'BapSshPromotionPublisherPlugin']) {
-                script {
-                    sshPublisher(
-                        publishers: [
-                            sshPublisherDesc(
-                                configName: 'remote',
-                                transfers: [
-                                    sshTransfer(
-                                        cleanRemote: false,
-                                        excludes: '',
-                                        execCommand: '/bin/bash /home/centos/script/demoDeploy.sh',
-                                        execTimeout: 120000,
-                                        flatten: false,
-                                        makeEmptyDirs: false,
-                                        noDefaultExcludes: false,
-                                        patternSeparator: '[, ]+',
-                                        remoteDirectory: '/deploy',
-                                        remoteDirectorySDF: false,
-                                        removePrefix: 'build/libs',
-                                        sourceFiles: 'build/libs/*.jar',
-                                        usePty: true
-                                    )
-                                ],
-                                usePromotionTimestamp: false,
-                                useWorkspaceInPromotion: false,
-                                verbose: false
-                            )
-                        ]
-                    )
-                }
-            }
+node {
+    def hello = 'Hello jojoldu' // 변수선언
+    stage ('clone') {
+        git 'https://github.com/jojoldu/jenkins-pipeline.git' // git clone
+    }
+    dir ('sample') { // clone 받은 프로젝트 안의 sample 디렉토리에서 stage 실행
+        stage ('sample/execute') {
+            sh './execute.sh'
         }
     }
+    stage ('print') {
+        print(hello) // 함수 + 변수 사용
+    }
+}
+
+// 함수 선언 (반환 타입이 없기 때문에 void로 선언, 있다면 def로 선언하면 됨)
+void print(message) {
+    echo "${message}"
 }
