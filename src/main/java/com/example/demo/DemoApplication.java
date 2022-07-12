@@ -18,7 +18,7 @@ public class DemoApplication {
 
     @GetMapping("/")
     public String test()  {
-        String value = "Hello this is for test";
+        String value = "Hello this is for test2";
         return value;
     }
 }
